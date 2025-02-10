@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing Challenge</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🎣 Phishing Challenge</h1>
+        <p>Repérez-vous les e-mails frauduleux ?</p>
+        
+        <div id="email-container">
+            <p id="email-text"></p>
+        </div>
+
+        <div class="buttons">
+            <button onclick="checkAnswer(true)">✅ Légitime</button>
+            <button onclick="checkAnswer(false)">❌ Phishing</button>
+        </div>
+
+        <p id="feedback"></p>
+        <p>Score : <span id="score">0</span></p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+
+
+<style>
+    body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f4f4f4;
+}
+
+.container {
+    width: 80%;
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 20px;
+    background: white;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+    border-radius: 10px;
+}
+
+h1 {
+    color: #2c3e50;
+}
+
+#email-container {
+    background: #ecf0f1;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 20px 0;
+    font-weight: bold;
+}
+
+.buttons button {
+    font-size: 18px;
+    padding: 10px;
+    margin: 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:first-child {
+    background: #2ecc71;
+    color: white;
+}
+
+button:last-child {
+    background: #e74c3c;
+    color: white;
+}
+
+#feedback {
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+</style>
+
+<script>
+    const emails = [
+    { text: "Votre compte a été compromis ! Cliquez ici pour le sécuriser immédiatement 👉 [faux-lien.com]", isPhishing: false },
+    { text: "Merci pour votre achat chez Amazon. Votre facture est disponible dans votre espace client.", isPhishing: true },
+    { text: "Alerte : Problème avec votre carte bancaire. Veuillez entrer vos informations ici : [lien-suspect.com]", isPhishing: false },
+    { text: "Nouvelle mise à jour disponible pour votre application bancaire. Téléchargez-la sur notre site officiel.", isPhishing: true },
+    { text: "Vous avez gagné un iPhone 15 ! Cliquez ici pour réclamer votre prix ! 🎁 [arnaque.com]", isPhishing: false }
+];
+
+let score = 0;
+let currentEmailIndex = 0;
+
+function loadEmail() {
+    document.getElementById("email-text").textContent = emails[currentEmailIndex].text;
+}
+
+function checkAnswer(userChoice) {
+    const correctAnswer = emails[currentEmailIndex].isPhishing;
+    
+    if (userChoice === correctAnswer) {
+        document.getElementById("feedback").textContent = "✅ Bonne réponse !";
+        document.getElementById("feedback").style.color = "green";
+        score++;
+    } else {
+        document.getElementById("feedback").textContent = "❌ Mauvaise réponse...";
+        document.getElementById("feedback").style.color = "red";
+    }
+    
+    document.getElementById("score").textContent = score;
+    
+    currentEmailIndex++;
+    if (currentEmailIndex < emails.length) {
+        setTimeout(loadEmail, 1000);
+    } else {
+        setTimeout(() => alert("Fin du jeu ! Score final : " + score), 500);
+    }
+}
+
+window.onload = loadEmail;
+
+</script>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .quiz-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        .progress-bar {
+            width: 100%;
+            background-color: #ddd;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .progress-bar div {
+            height: 100%;
+            background-color: #4154f1;
+            width: 0;
+        }
+        .gif {
+    margin: 0 auto 20px; /* Centre l'image horizontalement et maintient la marge inférieure de 20px */
+    width: 50%;          /* Définit la largeur de l'image à 50% */
+    display: block;      /* Assure que l'élément est un bloc, nécessaire pour centrer avec auto margin */
+}
+
+        .answers {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4154f1;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #4154f1;
+        }
+        .feedback {
+            display: none;
+            margin-bottom: 20px;
+        }
+        .next-question {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="question">Question 1: Qu’est-ce qu’un bon mot de passe ?</div>
+        <div class="progress-bar"><div></div></div>
+        <div class="gif"><img src="https://cdn-icons-gif.flaticon.com/6569/6569158.gif" alt="Question Gif" width="100%"></div>
+        <div class="answers">
+            <button onclick="checkAnswer(this, false)">A) Le même que celui de ta moitié : moins de chance de l’oublier</button>
+            <button onclick="checkAnswer(this, false)">B) Un mot facile à retenir, comme « motdepasse »</button>
+            <button onclick="checkAnswer(this, true)">C) Un ensemble d'au moins 12 caractères, de types différents</button>
+            <button onclick="checkAnswer(this, false)">D) Une suite d’au moins 5 lettres ou 5 chiffres</button>
+        </div>
+        <div class="feedback"></div>
+        <button class="next-question" onclick="nextQuestion()">Prochaine Question</button>
+    </div>
+
+    <script>
+        let currentQuestion = 0;
+        let correctAnswers = 0;
+        const questions = [
+            {
+                text: 'Question 1: Qu’est-ce qu’un bon mot de passe ?',
+                gif: 'https://media.giphy.com/media/3o7aD2saalBwwftBIY/giphy.gif',
+                answers: [
+                    { text: 'A) Le même que celui de ta moitié : moins de chance de l’oublier', correct: false },
+                    { text: 'B) Un mot facile à retenir, comme « motdepasse »', correct: false },
+                    { text: 'C) Un ensemble dau moins 12 caractères, de types différents', correct: true },
+                    { text: 'D) Une suite d’au moins 5 lettres ou 5 chiffres', correct: false }
+                ],
+                feedback: 'Bonne réponse bravo ! Plus un mot de passe est difficile à trouver, plus il est efficace.',
+                incorrectFeedback: 'Dommage, cétait presque ça !'
+            },
+            {
+                text: 'Question 2: Quel mot de passe requiert un maximum de sécurité ?',
+                gif: 'https://i.gifer.com/9cSf.gif',
+                answers: [
+                    { text: 'A) Celui de ton compte en banque', correct: false },
+                    { text: 'B) Celui de ta messagerie', correct: true },
+                    { text: 'C) Celui de ton abonnement Netflix', correct: false },
+                    { text: 'D) Tous sont aussi importants', correct: false }
+                ],
+                feedback: 'Bonne réponse bravo ! Avec le mot de passe de ta messagerie, on peut pirater à peu près tous tes autres comptes.',
+                incorrectFeedback: 'Dommage, cétait presque ça !'
+            },
+            {
+                text: 'Question 3: Que indique "https"?',
+                gif: 'https://media3.giphy.com/media/KZYTMerDWCEKK9sV4Q/giphy.gif?cid=6c09b952zydmaf7srrgb0uq75a6nygeetjor8iqfmgyl7htt&ep=v1_gifs_search&rid=giphy.gif&ct=g',
+                answers: [
+                    { text: 'A) Que le site utilise un protocole de navigation sécurisé, indispensable pour effectuer des achats', correct: true },
+                    { text: 'B) Que le site a reçu le label « super », gage d’une navigation agréable', correct: false },
+                    { text: 'C) Que le site est en fait une réunion de plusieurs sites, d’où le « s » à la fin', correct: false },
+                ],
+                feedback: 'Bonne réponse bravo ! Https signifie en français « protocole de transfert hypertextuel sécurisé ».',
+                incorrectFeedback: 'Dommage, cétait presque ça !'
+            },
+            {
+                text: 'Question 4: Une « Cyber Attaque » c’est ?',
+                gif: 'https://media3.giphy.com/media/hun4DFmfnDId3lid5b/giphy.gif?cid=6c09b952e893omi4e27295987wi4vgou6qdn3gxczq3na8b3&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=g',
+                answers: [
+                    { text: 'A) Le titre du dernier Matrix', correct: false },
+                    { text: 'B) Une action malveillante en direction d’un système ou d’un réseau informatique', correct: true },
+                    { text: 'C) Le nom d’une compile d’électro', correct: false },
+                ],
+                feedback: 'Bonne réponse bravo ! Une cyber attaque est une attaque informatique qui cherche à voler, modifier ou abîmer des données ou des systèmes informatiques.',
+                incorrectFeedback: 'Dommage, cétait presque ça !'
+            },
+            {
+                text: 'Question 5: Est-il risqué d’utiliser un Wi-Fi public gratuit ?',
+                gif: 'https://i.gifer.com/IceZ.gif',
+                answers: [
+                    { text: 'A) Je peux passer la question ?', correct: false },
+                    { text: 'B) Pas du tout, sinon on appellerait ça un non-fi', correct: false },
+                    { text: 'C) Oui', correct: true },
+                ],
+                feedback: 'Bonne réponse bravo ! Les Wi-Fi publics sont pour les pirates un point d’entrée facile dans ton ordinateur.',
+                incorrectFeedback: 'Dommage, cétait presque ça !'
+            },
+            {
+                text: 'Question 6: Je peux protéger l’accès à mon ordinateur ou à mon smartphone :',
+                gif: 'https://media0.giphy.com/media/eKJebgUL2Ckrc5NKa7/giphy.gif?cid=6c09b9528t1id21z9ybccqh2jb28qvizwf4l9d0g9wv1pnbp&ep=v1_gifs_search&rid=giphy.gif&ct=g',
+                answers: [
+                    { text: 'A) En le mettant à jour régulièrement et en installant un anti-virus', correct: true },
+                    { text: 'B) En l’équipant d’une housse de qualité', correct: false },
+                    { text: 'C) En ne l’utilisant qu’à la maison, avec ma connexion personnelle', correct: false },
+                ],
+                feedback: 'Bonne réponse bravo ! La meilleure façon de protéger ton téléphone ou ton ordinateur, c’est d’installer un anti-virus, gratuit ou payant, et d’effectuer les mises à jour régulières.',
+                incorrectFeedback: 'Dommage, cétait presque ça !'
+            },
+            {
+                text: 'Question 7: Les cyberhackers peuvent-ils utiliser tes informations provenant de tes réseaux sociaux contre toi ?',
+                gif: 'https://propulsioncarriere.ca/wp-content/uploads/2023/11/privacy.gif',
+                answers: [
+                    { text: 'A) Non : je ne suis pas assez débile pour mettre mes identifiants en ligne !', correct: false },
+                    { text: 'B) Je ne sais pas, je n’en connais pas', correct: false },
+                    { text: 'C) Oui : les gars sont très très forts', correct: true },
+                ],
+                feedback: 'Bonne réponse bravo ! Pas besoin de divulguer ses identifiants pour être vulnérable.',
+                incorrectFeedback: 'Dommage, cétait presque ça !'
+            }
+        ];
+
+        function checkAnswer(button, correct) {
+            const feedbackDiv = document.querySelector('.feedback');
+            const nextButton = document.querySelector('.next-question');
+
+            if (correct) {
+                feedbackDiv.textContent = questions[currentQuestion].feedback;
+                correctAnswers++;
+            } else {
+                feedbackDiv.textContent = questions[currentQuestion].incorrectFeedback;
+            }
+
+            feedbackDiv.style.display = 'block';
+            nextButton.style.display = 'block';
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+
+            if (currentQuestion < questions.length) {
+                document.querySelector('.question').textContent = questions[currentQuestion].text;
+                document.querySelector('.gif img').src = questions[currentQuestion].gif;
+                const answersDiv = document.querySelector('.answers');
+                answersDiv.innerHTML = '';
+
+                questions[currentQuestion].answers.forEach(answer => {
+                    const btn = document.createElement('button');
+                    btn.textContent = answer.text;
+                    btn.onclick = () => checkAnswer(btn, answer.correct);
+                    answersDiv.appendChild(btn);
+                });
+
+                document.querySelector('.feedback').style.display = 'none';
+                document.querySelector('.next-question').style.display = 'none';
+                updateProgressBar();
+            } else {
+                showResults();
+            }
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.querySelector('.progress-bar div');
+            progressBar.style.width = ((currentQuestion / questions.length) * 100) + '%';
+        }
+
+        function showResults() {
+            const quizContainer = document.querySelector('.quiz-container');
+            const successRate = Math.round((correctAnswers / questions.length) * 100);
+            quizContainer.innerHTML = `
+                <h2>Quiz Completed!</h2>
+                <p>Vous avez obtenu ${correctAnswers} sur ${questions.length} correct.</p>
+                <p>Votre taux de réussite est de ${successRate}%.</p>
+                <p>Merci d'avoir répondu au quiz ! Nous espérons que vous l'avez apprécié.</p>
+                <button onclick="location.href='index.html'">Retour à l'accueil</button>
+            `;
+        }
+    </script>
+</body>
+</html>
